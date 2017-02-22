@@ -2,8 +2,15 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-
 \usepackage[english]{babel}
+
+\usepackage{graphicx}
+
+\usepackage{natbib}
+\bibliographystyle{alpha}
+\usepackage{bibentry}
+
+\usepackage{lipsum}
 
 \title{Sample Article}
 \author{Michael Hoff}
@@ -14,8 +21,23 @@
 
 \maketitle
 
-\section{Section}
+\section{SVG}
 
-Just some sample text.
+\lipsum[1]
+
+\begin{figure}[h!]
+    \begin{center}
+        \includegraphics{fig/svg/circle}
+        \caption{Wow, a vector graphics.}
+    \end{center}
+\end{figure}
+
+\section{BIB}
+
+We can also generate our bib-file to clean up
+bibtex mistakes made by human or computer program
+\cite{Lee2016}.
+
+\bibliography{sample}
 
 \end{document}

@@ -3,9 +3,12 @@ ROOT_BASENAME = sample
 TARGET_PDF = ${ROOT_BASENAME}.pdf
 BUILD_DIR = .build
 SOURCE_DIRS =
+BIB_RESOURCES = $(filter-out ${TARGET_BIB}, $(wildcard *.bib))
+BIBER_CONF = .statics/biber.conf
 
 ### Internal ###
 ROOT_FILENAME = ${ROOT_BASENAME}.tex
+TARGET_BIB = ${BUILD_DIR}/${ROOT_BASENAME}.bib
 PDFLATEX = pdflatex -interaction=nonstopmode
 LATEXMK = latexmk -bibtex -pdf -pdflatex="yes '' | ${PDFLATEX}" -use-make -outdir=${BUILD_DIR}
 
@@ -26,7 +29,7 @@ endif
 pdf: compile
 	cp ${BUILD_DIR}/${ROOT_BASENAME}.pdf ${TARGET_PDF}
 
-compile:
+compile: ${TARGET_BIB}
 ifdef SOURCE_DIR
 	for SOURCE_DIR in "${SOURCE_DIRS[@]}"; do
 		find ${SOURCE_DIR} -type d -exec mkdir -p ${BUILD_DIR}/{} \;
@@ -48,6 +51,17 @@ else
 endif
 endif
 	pdfcrop $@ $@
+
+$(TARGET_BIB): $(BIB_RESOURCES) ${BIBER_CONF}
+	mkdir -p ${BUILD_DIR}
+	rm -f $@
+	$(foreach bib_file, $(BIB_RESOURCES), cat $(bib_file) >> $@;)
+ifneq (, $(shell which biber))
+	biber --tool --output_file $@~ $@
+	mv $@~ $@
+else
+	$(warning Tool 'biber' is not installed. Formatting issues could arise in bibliography.)
+endif
 
 wc:	compile
 	pdftops ${BUILD_DIR}/${ROOT_BASENAME}.pdf

@@ -4,11 +4,11 @@ TARGET_PDF = ${ROOT_BASENAME}.pdf
 BUILD_DIR = .build
 SOURCE_DIRS =
 BIB_RESOURCES = $(filter-out ${TARGET_BIB}, $(wildcard *.bib))
-BIBER_CONF = .statics/biber.conf
 
 ### Internal ###
 ROOT_FILENAME = ${ROOT_BASENAME}.tex
 TARGET_BIB = ${BUILD_DIR}/${ROOT_BASENAME}.bib
+BIBER_CONF = .statics/biber.conf
 PDFLATEX = pdflatex -interaction=nonstopmode
 LATEXMK = latexmk -bibtex -pdf -pdflatex="yes '' | ${PDFLATEX}" -use-make -outdir=${BUILD_DIR}
 
@@ -51,6 +51,7 @@ else
 endif
 endif
 	pdfcrop $@ $@
+	mkdir -p `dirname ${BUILD_DIR}/$@` && mv $@ ${BUILD_DIR}/$@
 
 $(TARGET_BIB): $(BIB_RESOURCES) ${BIBER_CONF}
 	mkdir -p ${BUILD_DIR}
